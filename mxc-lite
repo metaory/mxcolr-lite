@@ -17,13 +17,12 @@ generate_seed () {
   local xcal='0.16'
   declare -g UNO="$(pastel random -n 1 -s "$strategy" | pastel saturate "$xcal" | pastel darken "$xcal" | pastel format hex)"
   declare -g DOS="$(pastel random -n 1 -s "$strategy" | pastel saturate "$xcal" | pastel darken "$xcal" | pastel format hex)"
-  pastel format hex $UNO $DOS
 
   local uno_hue; uno_hue="$(pastel format hsl-hue "$UNO")"
   local dos_hue; dos_hue="$(pastel format hsl-hue "$DOS")"
   local diff; diff=$(diff_real "$uno_hue" "$dos_hue")
 
-  (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) && echo 'hues are too close,' && generate_seed "${@}"
+  (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) &&  generate_seed "${@}"
 }
 
 generate_pallete () {
@@ -40,9 +39,10 @@ generate_pallete () {
   done
 
   for i in 00 07 08 15; do
-    local c="C$i"
-    local expoSqr="0$(echo "scale=2; e(sqrt($i))/100"     | bc -l)"
-    declare -g "$c=$(pastel set hsl-saturation 0.16 "${UNO}" | pastel set hsl-lightness 0.06 | pastel lighten $expoSqr | pastel format hex)"
+    local c="C$i"; local x="$i"
+    [[ $i == 07 ]] && x=4
+    local expo="0$(echo "scale=2; e(sqrt($x))/100" | bc -l)"
+    declare -g "$c=$(pastel set hsl-saturation 0.16 "${UNO}" | pastel set hsl-lightness 0.06 | pastel lighten $expo | pastel format hex)"
   done
 
   for x in "${MX_CC[@]}"; do export $x; done
@@ -50,7 +50,7 @@ generate_pallete () {
 
 demo () {
   for x in "${MX_CC[@]}"; do 
-    pastel format hex ${!x}
+    printf "$x: "; pastel format hex ${!x}
   done
 }
 
