@@ -26,7 +26,12 @@ generate_seed () {
   (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) &&  generate_seed "${@}"
 }
 
-generate_pallete () {
+generate_palette () {
+  C00="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.1 | pastel lighten 0.02 | pastel format hex)"
+  C08="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.2 | pastel lighten 0.08 | pastel format hex)"
+  C07="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.3 | pastel lighten 0.16 | pastel format hex)"
+  C15="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.4 | pastel lighten 0.32 | pastel format hex)"
+
   C01="$(pastel mix ${UNO} crimson       -f 0.5 | pastel mix - deeppink          -f 0.6 | pastel saturate 0.08 | pastel format hex)"
   C02="$(pastel mix ${UNO} darkseagreen  -f 0.5 | pastel mix - mediumspringgreen -f 0.6 | pastel saturate 0.08 | pastel format hex)"
   C03="$(pastel mix ${UNO} orange        -f 0.5 | pastel mix - coral             -f 0.6 | pastel saturate 0.08 | pastel format hex)"
@@ -34,17 +39,13 @@ generate_pallete () {
   C05="$(pastel mix ${UNO} indigo        -f 0.5 | pastel mix - slateblue         -f 0.6 | pastel saturate 0.04 | pastel format hex)"
   C06="$(pastel mix ${UNO} darkturquoise -f 0.5 | pastel mix - deepskyblue       -f 0.6 | pastel saturate 0.08 | pastel format hex)"
 
-  C00="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.1 | pastel lighten 0.02 | pastel format hex)"
-  C08="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.2 | pastel lighten 0.08 | pastel format hex)"
-  C07="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.3 | pastel lighten 0.16 | pastel format hex)"
-  C15="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.4 | pastel lighten 0.32 | pastel format hex)"
-
   C09="$(pastel lighten 0.10 "$C01" | pastel format hex)"
   C10="$(pastel lighten 0.10 "$C02" | pastel format hex)"
   C11="$(pastel lighten 0.10 "$C03" | pastel format hex)"
   C12="$(pastel lighten 0.10 "$C04" | pastel format hex)"
   C13="$(pastel lighten 0.10 "$C05" | pastel format hex)"
   C14="$(pastel lighten 0.10 "$C06" | pastel format hex)"
+
   for x in "${MX_CC[@]}"; do export $x; done
 }
 
@@ -70,7 +71,7 @@ save () {
 
 main () {
   generate_seed
-  generate_pallete
+  generate_palette
   save
   demo
 }
@@ -81,7 +82,6 @@ main () {
   esac
   main "$1"
 }
-
 
   # for i in {09..14}; do
   #   local c="C0$(echo "$i - 8" | bc)"; c="${!c}"
