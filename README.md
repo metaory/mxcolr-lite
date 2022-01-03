@@ -10,4 +10,9 @@ Usage
 
 ![generate](./assets/gifcast_220103093901.gif)
 
+Requirements
+------------
+- [pastel](https://github.com/sharkdp/pastel)
+- [GNU bc](https://www.gnu.org/software/bc)
+
 > this project is the lite version of [mxcolr](https://github.com/metaory/mxcolr)
