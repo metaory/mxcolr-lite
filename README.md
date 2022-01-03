@@ -1,4 +1,4 @@
-# mxcolr-lite ▲
+# mxcolr-lite ꚙ
 
 Usage
 =====
