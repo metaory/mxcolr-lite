@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+MIN_HUE_DISTANCE=80
+
+MX_CC=( UNO DOS C{00..15} )
+
+logv () {
+  while [ "$1" ]; do
+    echo "${1} ${!1}"
+    shift
+  done
+}
+
+generate_seed () {
+  diff_real () { echo "df=($1 - $2); if (df < 0) { df=df* -1}; print df" | bc -l; }
+  local strategy=${STRATEGY:-vivid}
+  local xcal='0.16'
+  declare -g UNO="$(pastel random -n 1 -s "$strategy" | pastel saturate "$xcal" | pastel darken "$xcal" | pastel format hex)"
+  declare -g DOS="$(pastel random -n 1 -s "$strategy" | pastel saturate "$xcal" | pastel darken "$xcal" | pastel format hex)"
+  pastel format hex $UNO $DOS
+
+  local uno_hue; uno_hue="$(pastel format hsl-hue "$UNO")"
+  local dos_hue; dos_hue="$(pastel format hsl-hue "$DOS")"
+  local diff; diff=$(diff_real "$uno_hue" "$dos_hue")
+
+  (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) && echo 'hues are too close,' && generate_seed "${@}"
+}
+
+generate_pallete () {
+  C01="$(pastel mix ${UNO} crimson       -f 0.5 | pastel mix - deeppink          -f 0.6 | pastel saturate 0.08 | pastel format hex)"
+  C02="$(pastel mix ${UNO} darkseagreen  -f 0.5 | pastel mix - mediumspringgreen -f 0.6 | pastel saturate 0.08 | pastel format hex)"
+  C03="$(pastel mix ${UNO} orange        -f 0.5 | pastel mix - coral             -f 0.6 | pastel saturate 0.08 | pastel format hex)"
+  C04="$(pastel mix ${UNO} blue          -f 0.5 | pastel mix - deepskyblue       -f 0.6 | pastel saturate 0.04 | pastel format hex)"
+  C05="$(pastel mix ${UNO} indigo        -f 0.5 | pastel mix - slateblue         -f 0.6 | pastel saturate 0.04 | pastel format hex)"
+  C06="$(pastel mix ${UNO} darkturquoise -f 0.5 | pastel mix - deepskyblue       -f 0.6 | pastel saturate 0.08 | pastel format hex)"
+
+  for i in {09..14}; do
+    local c="C0$(echo "$i - 8" | bc)"; c="${!c}"
+    declare -g "C$i=$(pastel lighten   0.10 "$c" | pastel format hex)"
+  done
+
+  for i in 00 07 08 15; do
+    local c="C$i"
+    local expoSqr="0$(echo "scale=2; e(sqrt($i))/100"     | bc -l)"
+    declare -g "$c=$(pastel set hsl-saturation 0.16 "${UNO}" | pastel set hsl-lightness 0.06 | pastel lighten $expoSqr | pastel format hex)"
+  done
+
+  for x in "${MX_CC[@]}"; do export $x; done
+}
+
+demo () {
+  for x in "${MX_CC[@]}"; do 
+    pastel format hex ${!x}
+  done
+}
+
+save () {
+  for file in ./templates/*; do
+    envsubst < "$file" > "./mxc-palette.sh"
+  done
+}
+
+main () {
+  generate_seed
+  generate_pallete
+  demo
+  save
+}
+
+{
+  case $1 in
+    --strategy) shift; STRATEGY=$1; shift;;
+  esac
+  main "$1"
+}
+
