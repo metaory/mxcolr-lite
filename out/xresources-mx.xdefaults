@@ -2,22 +2,22 @@
 ! #include "/home/meta/.config/mxc/xresources-mx.xdefaults"
 ! ####################################################
 
-*.color0:               #1c211f
-*.color1:               #d65c6e
-*.color2:               #54d88f
-*.color3:               #dd9e4a
-*.color4:               #4c8cdf
-*.color5:               #5e5aa7
-*.color6:               #29c8d6
-*.color7:               #6c7f78
-*.color8:               #424d49
-*.color9:               #e08592
-*.color10:              #7de1aa
-*.color11:              #e5b475
-*.color12:              #77a7e7
-*.color13:              #7e7bb9
-*.color14:              #54d3de
-*.color15:              #b2bdb9
+*.color0:               #211f1c
+*.color1:               #ef526d
+*.color2:               #89d685
+*.color3:               #f99646
+*.color4:               #8485db
+*.color5:               #8855a4
+*.color6:               #76c0cf
+*.color7:               #7f776c
+*.color8:               #4d4842
+*.color9:               #f38094
+*.color10:              #aee3ab
+*.color11:              #fbb277
+*.color12:              #abace7
+*.color13:              #a075b7
+*.color14:              #9cd1dc
+*.color15:              #bdb9b2
 ! *.background:           #0d1012
 ! *.foreground:           #566976
 ! *.selection_background: #1d252b

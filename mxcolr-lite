@@ -52,8 +52,12 @@ demo () {
   for i in "${!MX_CC[@]}"; do
     local x=${MX_CC[i]}
     (( i == 2 )) && echo
-    printf "$x: "; pastel format hex ${!x}
+    ! (( i % 2 )) && echo
+    local textcolor=$(pastel textcolor ${!x} | pastel format hex)
+    printf '\t'
+    pastel paint "${textcolor}" -n -o "${!x}" "$x ${!x}"
   done
+  echo
 }
 
 save () {
