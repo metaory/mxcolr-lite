@@ -70,14 +70,15 @@ demo () {
 save () {
   for file in ./templates/*; do
     envsubst < "$file" > "./mxc-palette.sh"
+    echo " ::> $file"
   done
 }
 
 main () {
   generate_seed
   generate_pallete
-  demo
   save
+  demo
 }
 
 {
