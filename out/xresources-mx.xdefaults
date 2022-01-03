@@ -1,0 +1,26 @@
+! # Add this line to your ~/.Xresources ##############
+! #include "/home/meta/.config/mxc/xresources-mx.xdefaults"
+! ####################################################
+
+*.color0:               #1c211f
+*.color1:               #d65c6e
+*.color2:               #54d88f
+*.color3:               #dd9e4a
+*.color4:               #4c8cdf
+*.color5:               #5e5aa7
+*.color6:               #29c8d6
+*.color7:               #6c7f78
+*.color8:               #424d49
+*.color9:               #e08592
+*.color10:              #7de1aa
+*.color11:              #e5b475
+*.color12:              #77a7e7
+*.color13:              #7e7bb9
+*.color14:              #54d3de
+*.color15:              #b2bdb9
+! *.background:           #0d1012
+! *.foreground:           #566976
+! *.selection_background: #1d252b
+! *.selection_foreground: #28b0ff
+! *.cursor_text_color:    #000000
+! *.cursor:               #28b0ff

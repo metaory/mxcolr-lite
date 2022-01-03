@@ -4,6 +4,8 @@ MIN_HUE_DISTANCE=80
 
 MX_CC=( UNO DOS C{00..15} )
 
+mkdir out &> /dev/null
+
 logv () {
   while [ "$1" ]; do
     echo "${1} ${!1}"
@@ -43,19 +45,6 @@ generate_pallete () {
   C12="$(pastel lighten 0.10 "$C04" | pastel format hex)"
   C13="$(pastel lighten 0.10 "$C05" | pastel format hex)"
   C14="$(pastel lighten 0.10 "$C06" | pastel format hex)"
-
-  # for i in {09..14}; do
-  #   local c="C0$(echo "$i - 8" | bc)"; c="${!c}"
-  #   declare -g "C$i=$(pastel lighten   0.10 "$c" | pastel format hex)"
-  # done
-
-  # for i in 00 07 08 15; do
-  #   local c="C$i"; local x="$i"
-  #   [[ $i == 07 ]] && x=4
-  #   local expo="0$(echo "scale=2; e(sqrt($x))/100" | bc -l)"
-  #   declare -g "$c=$(pastel set hsl-saturation 0.16 "${UNO}" | pastel set hsl-lightness 0.06 | pastel lighten $expo | pastel format hex)"
-  # done
-
   for x in "${MX_CC[@]}"; do export $x; done
 }
 
@@ -69,8 +58,9 @@ demo () {
 
 save () {
   for file in ./templates/*; do
-    envsubst < "$file" > "./mxc-palette.sh"
-    echo " ::> $file"
+    local out="./out/$(basename $file)"
+    envsubst < "$file" > $out
+    echo " ::> $out"
   done
 }
 
@@ -87,4 +77,17 @@ main () {
   esac
   main "$1"
 }
+
+
+  # for i in {09..14}; do
+  #   local c="C0$(echo "$i - 8" | bc)"; c="${!c}"
+  #   declare -g "C$i=$(pastel lighten   0.10 "$c" | pastel format hex)"
+  # done
+
+  # for i in 00 07 08 15; do
+  #   local c="C$i"; local x="$i"
+  #   [[ $i == 07 ]] && x=4
+  #   local expo="0$(echo "scale=2; e(sqrt($x))/100" | bc -l)"
+  #   declare -g "$c=$(pastel set hsl-saturation 0.16 "${UNO}" | pastel set hsl-lightness 0.06 | pastel lighten $expo | pastel format hex)"
+  # done
 
