@@ -4,12 +4,10 @@ Usage
 =====
     mxcolr-lite [template]
 
-
-### will generate random palette and replace variables in template file passed,
-### when no template passed it will substitute every file in templates folder. 
+### every file in `./templates/{tpl}` will be parsed; 
+### scheme variables replaced; and placed in `./out/{tpl}`
 
 ![generate](./assets/gifcast_220103133301.gif)
-
 
 Requirements
 ------------
