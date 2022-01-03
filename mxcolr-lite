@@ -14,9 +14,8 @@ logv () {
 generate_seed () {
   diff_real () { echo "df=($1 - $2); if (df < 0) { df=df* -1}; print df" | bc -l; }
   local strategy=${STRATEGY:-vivid}
-  local xcal='0.16'
-  declare -g UNO="$(pastel random -n 1 -s "$strategy" | pastel saturate "$xcal" | pastel darken "$xcal" | pastel format hex)"
-  declare -g DOS="$(pastel random -n 1 -s "$strategy" | pastel saturate "$xcal" | pastel darken "$xcal" | pastel format hex)"
+  declare -g UNO="$(pastel random -n 1 -s "$strategy" | pastel format hex)"
+  declare -g DOS="$(pastel random -n 1 -s "$strategy" | pastel format hex)"
 
   local uno_hue; uno_hue="$(pastel format hsl-hue "$UNO")"
   local dos_hue; dos_hue="$(pastel format hsl-hue "$DOS")"
