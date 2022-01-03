@@ -22,10 +22,11 @@ logv () {
 }
 
 generate_seed () {
+  echo "strategy: $1"
   diff_real () { echo "df=($1 - $2); if (df < 0) { df=df* -1}; print df" | bc -l; }
-  local strategy=${STRATEGY:-vivid}
-  declare -g UNO="$(pastel random -n 1 -s "$strategy" | pastel format hex)"
-  declare -g DOS="$(pastel random -n 1 -s "$strategy" | pastel format hex)"
+
+  declare -g UNO="$(pastel random -n 1 -s "$1" | pastel format hex)"
+  declare -g DOS="$(pastel random -n 1 -s "$1" | pastel format hex)"
 
   local uno_hue; uno_hue="$(pastel format hsl-hue "$UNO")"
   local dos_hue; dos_hue="$(pastel format hsl-hue "$DOS")"
@@ -78,18 +79,13 @@ save () {
 }
 
 main () {
-  generate_seed
+  generate_seed ${1:-lch_hue}
   generate_palette
   save
   demo
 }
 
-{
-  case ${1:-vivid} in
-    --strategy) shift; STRATEGY=$1; shift;;
-  esac
-  main
-}
+main $*
 
   # for i in {09..14}; do
   #   local c="C0$(echo "$i - 8" | bc)"; c="${!c}"
