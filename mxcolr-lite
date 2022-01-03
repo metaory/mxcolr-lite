@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 set -o noclobber  # Avoid overlay files (echo "hi" > foo)
 set -o errexit    # Used to exit upon error, avoiding cascading errors
