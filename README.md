@@ -15,4 +15,4 @@ Requirements
 - [pastel](https://github.com/sharkdp/pastel)
 - [GNU bc](https://www.gnu.org/software/bc)
 
-> this project is the lite version of [mxcolr](https://github.com/metaory/mxcolr)
+## this project is the lite version of [mxcolr](https://github.com/metaory/mxcolr)
