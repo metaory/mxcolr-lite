@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 
+set -o noclobber  # Avoid overlay files (echo "hi" > foo)
+set -o errexit    # Used to exit upon error, avoiding cascading errors
+set -o pipefail   # Unveils hidden failures
+set -o nounset    # Exposes unset variables
+set -o errtrace   # Trace error LINENO
+
+trap 'echo Error at $LINENO' ERR
+
 MIN_HUE_DISTANCE=80
 
 MX_CC=( UNO DOS C{00..15} )
 
-mkdir out &> /dev/null
+mkdir out 2> /dev/null || true
 
 logv () {
   while [ "$1" ]; do
@@ -23,7 +31,7 @@ generate_seed () {
   local dos_hue; dos_hue="$(pastel format hsl-hue "$DOS")"
   local diff; diff=$(diff_real "$uno_hue" "$dos_hue")
 
-  (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) &&  generate_seed "${@}"
+  (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) &&  generate_seed "${@}" || true
 }
 
 generate_palette () {
@@ -64,7 +72,7 @@ demo () {
 save () {
   for file in ./templates/*; do
     local out="./out/$(basename $file)"
-    envsubst < "$file" > $out
+    envsubst < "$file" | tee $out &> /dev/null
     echo " ::> $out"
   done
 }
@@ -77,10 +85,10 @@ main () {
 }
 
 {
-  case $1 in
+  case ${1:-vivid} in
     --strategy) shift; STRATEGY=$1; shift;;
   esac
-  main "$1"
+  main
 }
 
   # for i in {09..14}; do
