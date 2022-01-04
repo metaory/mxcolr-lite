@@ -2,7 +2,7 @@
 
 Usage
 =====
-    mxcolr-lite [template]
+    mxcolr-lite
 
 ### every file in `./templates/{tpl}` will be parsed; 
 ### scheme variables replaced; and placed in `./out/{tpl}`
