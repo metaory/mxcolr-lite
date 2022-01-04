@@ -24,3 +24,6 @@
 ! *.selection_foreground: $OFG
 ! *.cursor_text_color:    $WFX
 ! *.cursor:               $WBX
+
+*.uno: $UNO
+*.dos: $DOS

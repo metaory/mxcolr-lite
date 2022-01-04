@@ -1,4 +1,7 @@
 :root {
+  --mxc-uno: $UNO;
+  --mxc-dos: $DOS;
+
   --mxc-c00: $C00;
   --mxc-c01: $C01;
   --mxc-c02: $C02;
