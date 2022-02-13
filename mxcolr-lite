@@ -10,50 +10,70 @@ trap 'echo Error at $LINENO' ERR
 
 MIN_HUE_DISTANCE=80
 
-MX_CC=( UNO DOS C{00..15} )
+# MX_CC=( UNO DOS C{00..15} )
+MX_CC=( UNO DOS C01 C09 C02 C10 C03 C11 C04 C12 C05 C13 C06 C14 C00 C08 C07 C15)
+
+if ! command -v pastel &> /dev/null; then 
+  echo "pastel not found."
+  echo " ==> https://github.com/sharkdp/pastel#installation"
+  exit 1
+fi
 
 mkdir out 2> /dev/null || true
 
-logv () {
-  while [ "$1" ]; do
-    echo "${1} ${!1}"
-    shift
-  done
-}
+logv () { while [ "${1:-}" ]; do echo "${1} ${!1}"; shift; done; }
+
+mix () { pastel mix $*; }
+paint () { pastel paint $*; }
+format () { pastel format hex $*; }
+lighten () { pastel lighten $*; }
+saturate () { pastel saturate $*; }
+textcolor () { pastel textcolor $*; }
+set_lightness () { pastel set hsl-lightness $*; }
+set_saturation () { pastel set hsl-saturation $*; }
+
+diff_real () { echo "df=($1 - $2); if (df < 0) { df=df* -1}; print df" | bc -l; }
 
 generate_seed () {
-  echo "strategy: $1"
-  diff_real () { echo "df=($1 - $2); if (df < 0) { df=df* -1}; print df" | bc -l; }
+  local strategy="$1"
+  local attempt="${2:-1}"
 
-  declare -g UNO="$(pastel random -n 1 -s "$1" | pastel format hex)"
-  declare -g DOS="$(pastel random -n 1 -s "$1" | pastel format hex)"
+  logv attempt
+
+  declare -g UNO="$(pastel random -n 1 -s "$1" | format)"
+  declare -g DOS="$(pastel random -n 1 -s "$1" | format)"
 
   local uno_hue; uno_hue="$(pastel format hsl-hue "$UNO")"
   local dos_hue; dos_hue="$(pastel format hsl-hue "$DOS")"
+
+  (( $(echo "$uno_hue < 50" | bc) )) && uno_hue="$(echo "$uno_hue + 300" | bc)"
+  (( $(echo "$dos_hue < 50" | bc) )) && dos_hue="$(echo "$dos_hue + 300" | bc)"
+
   local diff; diff=$(diff_real "$uno_hue" "$dos_hue")
 
-  (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) &&  generate_seed "${@}" || true
+  (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) &&
+    generate_seed $strategy $((++attempt)) || true
 }
 
 generate_palette () {
-  C00="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.1 | pastel lighten 0.02 | pastel format hex)"
-  C08="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.2 | pastel lighten 0.08 | pastel format hex)"
-  C07="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.3 | pastel lighten 0.16 | pastel format hex)"
-  C15="$(pastel set hsl-saturation 0.08 "${UNO}" | pastel set hsl-lightness 0.4 | pastel lighten 0.32 | pastel format hex)"
+  C00="$(set_saturation 0.08 "${UNO}" | set_lightness 0.1 | lighten 0.02 | format)"
+  C08="$(set_saturation 0.08 "${UNO}" | set_lightness 0.2 | lighten 0.08 | format)"
+  C07="$(set_saturation 0.08 "${UNO}" | set_lightness 0.3 | lighten 0.16 | format)"
+  C15="$(set_saturation 0.08 "${UNO}" | set_lightness 0.4 | lighten 0.32 | format)"
 
-  C01="$(pastel mix ${UNO} crimson       -f 0.5 | pastel mix - deeppink          -f 0.6 | pastel saturate 0.08 | pastel format hex)"
-  C02="$(pastel mix ${UNO} darkseagreen  -f 0.5 | pastel mix - mediumspringgreen -f 0.6 | pastel saturate 0.08 | pastel format hex)"
-  C03="$(pastel mix ${UNO} orange        -f 0.5 | pastel mix - coral             -f 0.6 | pastel saturate 0.08 | pastel format hex)"
-  C04="$(pastel mix ${UNO} blue          -f 0.5 | pastel mix - deepskyblue       -f 0.6 | pastel saturate 0.04 | pastel format hex)"
-  C05="$(pastel mix ${UNO} indigo        -f 0.5 | pastel mix - slateblue         -f 0.6 | pastel saturate 0.04 | pastel format hex)"
-  C06="$(pastel mix ${UNO} darkturquoise -f 0.5 | pastel mix - deepskyblue       -f 0.6 | pastel saturate 0.08 | pastel format hex)"
+  C01="$(mix ${UNO} Crimson   -f 0.5 | mix - HotPink           -f 0.4 | saturate 0.04 | format)"
+  C02="$(mix ${UNO} Teal      -f 0.5 | mix - MediumSpringGreen -f 0.4 | saturate 0.04 | format)"
+  C03="$(mix ${UNO} Yellow    -f 0.5 | mix - Coral             -f 0.4 | saturate 0.04 | format)"
+  C04="$(mix ${UNO} RoyalBlue -f 0.5 | mix - DodgerBlue        -f 0.4 | saturate 0.04 | format)"
+  C05="$(mix ${UNO} Orchid    -f 0.5 | mix - SlateBlue         -f 0.4 | saturate 0.04 | format)"
+  C06="$(mix ${UNO} Cyan      -f 0.5 | mix - DeepSkyBlue       -f 0.4 | saturate 0.04 | format)"
 
-  C09="$(pastel lighten 0.10 "$C01" | pastel format hex)"
-  C10="$(pastel lighten 0.10 "$C02" | pastel format hex)"
-  C11="$(pastel lighten 0.10 "$C03" | pastel format hex)"
-  C12="$(pastel lighten 0.10 "$C04" | pastel format hex)"
-  C13="$(pastel lighten 0.10 "$C05" | pastel format hex)"
-  C14="$(pastel lighten 0.10 "$C06" | pastel format hex)"
+  C09="$(lighten 0.10 "$C01" | format)"
+  C10="$(lighten 0.10 "$C02" | format)"
+  C11="$(lighten 0.10 "$C03" | format)"
+  C12="$(lighten 0.10 "$C04" | format)"
+  C13="$(lighten 0.10 "$C05" | format)"
+  C14="$(lighten 0.10 "$C06" | format)"
 
   for x in "${MX_CC[@]}"; do export $x; done
 }
@@ -61,11 +81,10 @@ generate_palette () {
 demo () {
   for i in "${!MX_CC[@]}"; do
     local x=${MX_CC[i]}
-    (( i == 2 )) && echo
     ! (( i % 2 )) && echo
-    local textcolor=$(pastel textcolor ${!x} | pastel format hex)
-    printf '\t'
-    pastel paint "${textcolor}" -n -o "${!x}" "$x ${!x}"
+    local fg=$(textcolor ${!x} | format)
+    paint "${fg}" -n -o "${!x}" "$x ${!x}"
+    (( i % 2 )) && echo
   done
   echo
 }
@@ -86,16 +105,4 @@ main () {
 }
 
 main $*
-
-  # for i in {09..14}; do
-  #   local c="C0$(echo "$i - 8" | bc)"; c="${!c}"
-  #   declare -g "C$i=$(pastel lighten   0.10 "$c" | pastel format hex)"
-  # done
-
-  # for i in 00 07 08 15; do
-  #   local c="C$i"; local x="$i"
-  #   [[ $i == 07 ]] && x=4
-  #   local expo="0$(echo "scale=2; e(sqrt($x))/100" | bc -l)"
-  #   declare -g "$c=$(pastel set hsl-saturation 0.16 "${UNO}" | pastel set hsl-lightness 0.06 | pastel lighten $expo | pastel format hex)"
-  # done
 
