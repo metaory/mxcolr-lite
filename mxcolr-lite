@@ -80,8 +80,7 @@ demo () {
     local x=${MX_CC[i]}
     ! (( i % 2 )) && echo
     local fg=$(textcolor ${!x} | format)
-    paint "${fg}" -n -o "${!x}" "$x ${!x}"
-    (( i % 2 )) && echo
+    paint "${fg}" -n -o "${!x}" "·${x} ${!x}"
   done
   echo
 }
