@@ -46,9 +46,6 @@ generate_seed () {
   local uno_hue; uno_hue="$(pastel format hsl-hue "$UNO")"
   local dos_hue; dos_hue="$(pastel format hsl-hue "$DOS")"
 
-  (( $(echo "$uno_hue < 50" | bc) )) && uno_hue="$(echo "$uno_hue + 300" | bc)"
-  (( $(echo "$dos_hue < 50" | bc) )) && dos_hue="$(echo "$dos_hue + 300" | bc)"
-
   local diff; diff=$(diff_real "$uno_hue" "$dos_hue")
 
   (( $(echo "$diff < $MIN_HUE_DISTANCE" | bc -l) )) &&
@@ -61,7 +58,7 @@ generate_palette () {
   C07="$(set_saturation 0.08 "${UNO}" | set_lightness 0.3 | lighten 0.16 | format)"
   C15="$(set_saturation 0.08 "${UNO}" | set_lightness 0.4 | lighten 0.32 | format)"
 
-  C01="$(mix ${UNO} Crimson   -f 0.5 | mix - HotPink           -f 0.4 | saturate 0.04 | format)"
+  C01="$(mix ${UNO} Crimson   -f 0.5 | mix - PaleVioletRed     -f 0.4 | saturate 0.04 | format)"
   C02="$(mix ${UNO} Teal      -f 0.5 | mix - MediumSpringGreen -f 0.4 | saturate 0.04 | format)"
   C03="$(mix ${UNO} Yellow    -f 0.5 | mix - Coral             -f 0.4 | saturate 0.04 | format)"
   C04="$(mix ${UNO} RoyalBlue -f 0.5 | mix - DodgerBlue        -f 0.4 | saturate 0.04 | format)"
